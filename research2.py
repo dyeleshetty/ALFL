@@ -31,7 +31,13 @@ import os.path
 from os import path
 from math import isclose, sqrt
 
-DEVICES = 9
+#Deepak - Wandb
+# import wandb
+
+# wandb.init(project="AccFL-1EpochTest", entity="dyeleshetty")
+
+# DEVICES = 9
+DEVICES = 4
 # CLASSES = 2
 AL_CONF_THRESHOLD = 0.25
 AL_IOU_THRESHOLD = 0.45
@@ -91,6 +97,13 @@ def start_training(options):
 
         # print hyperparameters
     logger.info(colorstr('hyperparameters: ') + ', '.join(f'{k}={v}' for k, v in hyp.items()))
+
+    # wandb.config = {
+    #     "learning_rate": hyp['lr0'],
+    #     "epochs": epochs,
+    #     "batch_size": options.batch_size,
+    #     "num_classes": options.classes
+    # }
 
     # create needed directories
     save_dir = Path(
@@ -302,7 +315,13 @@ def start_training(options):
             mem = '%.3gG' % (torch.cuda.memory_reserved() / 1E9 if torch.cuda.is_available() else 0)  # (GB)
             s = ('%10s' * 2 + '%10.4g' * 6) % (
                 '%g/%g' % (epoch, epochs - 1), mem, *mloss, targets.shape[0], imgs.shape[-1])
+            loaded_weights=options.weights
             pbar.set_description(s)
+            pbar.set_description(loaded_weights)
+            #wandb-log
+            # wandb.log({"epoch": epoch, "loss": mloss})
+            # Optional
+            # wandb.watch(model)
 
             # end batch ------------------------------------------------------------------------------------------------
         # end epoch ----------------------------------------------------------------------------------------------------
@@ -353,14 +372,18 @@ def start_training(options):
             del ckpt
 
         # end epoch ----------------------------------------------------------------------------------------------------
+        # cfg = wandb.config
+        # model_artifact = wandb.Artifact("yolov5s", type="model", description="Obj Det", metadata=dict(cfg))
+        # model_artifact.add_file(best)
+        # wandb.log_artifact(model_artifact)
     # end training
     logger.info('%g epochs completed in %.3f hours.\n' % (epoch - start_epoch + 1, (time.time() - t0) / 3600))
 
-    # Strip optimizers
-    final = best if best.exists() else last  # final model
-    for f in last, best:
-        if f.exists():
-            strip_optimizer(f)  # strip optimizers
+    # # Strip optimizers
+    # final = best if best.exists() else last  # final model
+    # for f in last, best:
+    #     if f.exists():
+    #         strip_optimizer(f)  # strip optimizers
     torch.cuda.empty_cache()
 
 
@@ -614,6 +637,7 @@ def init(options):
                     f2.write(line)
 
 if __name__ == '__main__':
+    # wandb.init(project="AccFL-1EpochTest", entity="dyeleshetty")
     parser = argparse.ArgumentParser()
     parser.add_argument('--action', type=str, default='', help='action to execute: either [al, train, fedavg]')
     parser.add_argument('--round', type=int, default=0, help='')
@@ -645,9 +669,11 @@ if __name__ == '__main__':
     parser.add_argument('--nosave', action='store_true', help='')
     parser.add_argument('--cache', action='store_true', help='')
     opt = parser.parse_args(sys.argv[1:])
-    opt.yolo_dir = f'KITTI/yolo{opt.classes}/'
-    opt.clients_dir = f'KITTI/yolo{opt.classes}/clients/run-{opt.name}/'
+    opt.yolo_dir = f'KITTI/flcl/'
+    opt.clients_dir = f'KITTI/flcl/clients/run-{opt.name}/'
     opt.single_cls = False  # needed to reuse their dataloader ...
+    # wandb.run.name = opt.name+"-"+str(opt.round)+str(opt.client)
+    # wandb.run.save()
     if opt.reuse_weights:
         opt.weights = f"pseudo_fl/fed-{opt.name}-{opt.round - 1}.pt"
     if opt.action == 'al':

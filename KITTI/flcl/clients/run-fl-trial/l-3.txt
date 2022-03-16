@@ -1,0 +1,15 @@
+./KITTI/flcl/train/images\005253.jpg
+./KITTI/flcl/train/images\001889.jpg
+./KITTI/flcl/train/images\003553.jpg
+./KITTI/flcl/train/images\007387.jpg
+./KITTI/flcl/train/images\000512.jpg
+./KITTI/flcl/train/images\002757.jpg
+./KITTI/flcl/train/images\001107.jpg
+./KITTI/flcl/train/images\003973.jpg
+./KITTI/flcl/train/images\001271.jpg
+./KITTI/flcl/train/images\004422.jpg
+./KITTI/flcl/train/images\002280.jpg
+./KITTI/flcl/train/images\001395.jpg
+./KITTI/flcl/train/images\002229.jpg
+./KITTI/flcl/train/images\005532.jpg
+./KITTI/flcl/train/images\001110.jpg

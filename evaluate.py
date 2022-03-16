@@ -39,8 +39,8 @@ def get_dataloader(nc):
         return create_dataloader(f'KITTI/yolo2/val.txt', imgsz, batch_size, gs, opt, pad=0.5, rect=True,
                                  prefix=colorstr('val2: '))[0]
     else:
-        return create_dataloader(f'KITTI/yolo2/val.txt', imgsz, batch_size, gs, opt, pad=0.5, rect=True,
-                                 prefix=colorstr('val2: '))[0]
+        return create_dataloader(f'KITTI/yolo8/val.txt', imgsz, batch_size, gs, opt, pad=0.5, rect=True,
+                                 prefix=colorstr('val8: '))[0]
 
 
 def evaluate(weights, model=None, save_dir=None, dataloader=None, nc=2, compute_loss=None, plots=True):
